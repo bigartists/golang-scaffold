@@ -22,7 +22,7 @@ func (this *IUserServiceGetterImpl) SignIn(username string, password string) (*U
 		return nil, err
 	}
 	if user.Password != password {
-		err = fmt.Errorf("用户或密码错误, username=%s", username)
+		err = fmt.Errorf("用户名%s或密码错误", username)
 		return nil, err
 	}
 	return user, nil
