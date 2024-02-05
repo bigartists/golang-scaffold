@@ -1,13 +1,10 @@
 package service
 
 import (
-	"com.github.goscaffold/config"
 	"com.github.goscaffold/internal/dao"
 	"com.github.goscaffold/internal/model/UserModel"
-	"com.github.goscaffold/pkg/utils"
 	"com.github.goscaffold/web/result"
 	"fmt"
-	"time"
 )
 
 var UserServiceGetter IUser
@@ -19,25 +16,16 @@ func init() {
 type IUserServiceGetterImpl struct {
 }
 
-func (this *IUserServiceGetterImpl) SignIn(username string, password string) *result.ErrorResult {
+func (this *IUserServiceGetterImpl) SignIn(username string, password string) (*UserModel.UserImpl, error) {
 	user, err := dao.UserGetter.FindUserByUsername(username)
 	if err != nil {
-		return result.Result(nil, err)
+		return nil, err
 	}
 	if user.Password != password {
-		return result.Result(nil, fmt.Sprintf("用户密码错误, username=%s", username))
+		err = fmt.Errorf("用户或密码错误, username=%s", username)
+		return nil, err
 	}
-	// 生成 token
-	prikey := []byte(config.SysYamlconfig.Jwt.PrivateKey)
-	curTime := time.Now().Add(time.Second * 60 * 60 * 24)
-	token, _ := utils.GenerateToken(user.Id, prikey, curTime)
-
-	target := map[string]interface{}{
-		"user":  user,
-		"token": token,
-	}
-
-	return result.Result(target, nil)
+	return user, nil
 }
 
 func (this *IUserServiceGetterImpl) SignUp(user *UserModel.UserImpl) error {

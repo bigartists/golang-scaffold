@@ -20,7 +20,7 @@ func Run(port int) error {
 	dbs.InitDB()
 	r := gin.New()
 
-	r.POST("/login", controllers.SignIn)
+	controllers.SetUpAuthController(r)
 
 	r.Use(middlewares.JwtAuthMiddleware())
 	r.Use(middlewares.ErrorHandler())

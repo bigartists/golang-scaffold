@@ -17,18 +17,12 @@ func NewUserHandler() *UserController {
 
 // Build Build方法
 func (this *UserController) Build(r *gin.Engine) {
-
 	r.GET("/users", UserList)
 	r.GET("/user/:id", UserDetail)
-	r.GET("/test", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "test",
-		})
-	})
 }
 
 func UserList(c *gin.Context) {
-	ResultWrapper(c)("get userlist success", "100001", service.UserServiceGetter.GetUserList())(OK)
+	ResultWrapper(c)(service.UserServiceGetter.GetUserList(), "")(OK)
 }
 
 func UserDetail(c *gin.Context) {
@@ -36,7 +30,7 @@ func UserDetail(c *gin.Context) {
 		Id int64 `uri:"id" binding:"required"`
 	}{}
 	result.Result(c.ShouldBindUri(id)).Unwrap()
-	ResultWrapper(c)("get userdetail success", "100001", service.UserServiceGetter.GetUserDetail(id.Id).Unwrap())(OK)
+	ResultWrapper(c)(service.UserServiceGetter.GetUserDetail(id.Id).Unwrap(), "")(OK)
 }
 
 //

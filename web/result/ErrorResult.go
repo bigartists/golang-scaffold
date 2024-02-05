@@ -34,7 +34,6 @@ func Result(vs ...interface{}) *ErrorResult {
 	if len(vs) == 2 {
 
 		if vs[1] == nil {
-
 			return &ErrorResult{vs[0], nil}
 		}
 		if e, ok := vs[1].(error); ok {

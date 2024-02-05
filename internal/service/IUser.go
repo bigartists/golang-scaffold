@@ -11,6 +11,6 @@ type IUser interface {
 	CreateUser(user *UserModel.UserImpl) *result.ErrorResult
 	UpdateUser(id int, user *UserModel.UserImpl) *result.ErrorResult
 	DeleteUser(id int) *result.ErrorResult
-	SignIn(username string, password string) *result.ErrorResult
+	SignIn(username string, password string) (*UserModel.UserImpl, error)
 	SignUp(impl *UserModel.UserImpl) error
 }

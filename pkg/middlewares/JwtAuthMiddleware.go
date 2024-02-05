@@ -10,6 +10,7 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 	"net/http"
 	"strings"
+	"time"
 )
 
 func JwtAuthMiddleware() gin.HandlerFunc {
@@ -36,7 +37,12 @@ func JwtAuthMiddleware() gin.HandlerFunc {
 				c.JSON(http.StatusUnauthorized, gin.H{"error": "用户不存在"})
 				c.Abort()
 			} else {
-				c.Set("user", user)
+				//// 生成 token
+				prikey := []byte(config.SysYamlconfig.Jwt.PrivateKey)
+				curTime := time.Now().Add(time.Second * 60 * 60 * 24)
+				token, _ := utils.GenerateToken(user.Id, prikey, curTime)
+
+				c.Set("token", token)
 				c.Next()
 			}
 		} else if ve, ok := err.(*jwt.ValidationError); ok {

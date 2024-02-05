@@ -1,12 +1,21 @@
 package controllers
 
 import (
+	"com.github.goscaffold/config"
 	"com.github.goscaffold/internal/service"
+	"com.github.goscaffold/pkg/utils"
 	"com.github.goscaffold/web/result"
 	"github.com/gin-gonic/gin"
+	"time"
 )
 
-func SignIn(c *gin.Context) {
+type AuthController struct{}
+
+func NewAuthController() *AuthController {
+	return &AuthController{}
+}
+
+func (a *AuthController) Login(c *gin.Context) {
 	// 校验输入参数是否合法
 	params := &struct {
 		Username string `json:"username" binding:"required"`
@@ -14,9 +23,28 @@ func SignIn(c *gin.Context) {
 	}{}
 	// 校验参数
 	result.Result(c.ShouldBindJSON(params)).Unwrap()
-	ResultWrapper(c)("get user success", "100001", service.UserServiceGetter.SignIn(params.Username, params.Password).Unwrap())(OK)
+
+	user, err := service.UserServiceGetter.SignIn(params.Username, params.Password)
+	if err != nil {
+		ResultWrapper(c)(nil, err.Error())(Error)
+		return
+	}
+
+	//// 生成 token
+	prikey := []byte(config.SysYamlconfig.Jwt.PrivateKey)
+	curTime := time.Now().Add(time.Second * 60 * 60 * 24)
+	token, _ := utils.GenerateToken(user.Id, prikey, curTime)
+
+	c.Set("token", token)
+	ResultWrapper(c)(user, "")(OK)
 }
 
-func SignUp(c *gin.Context) {
+func (a *AuthController) SignUp(c *gin.Context) {
 
+}
+
+func SetUpAuthController(r *gin.Engine) {
+	authController := NewAuthController()
+	r.POST("/login", authController.Login)
+	r.POST("/register", authController.SignUp)
 }
