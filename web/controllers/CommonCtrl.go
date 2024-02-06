@@ -4,6 +4,7 @@ import (
 	"com.github.goscaffold/pkg/globalConstants"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"net/http"
 	"sync"
 )
 
@@ -64,6 +65,15 @@ func OK(c *gin.Context, v interface{}) {
 		r.Message = globalConstants.HTTPMESSAGESUCCESS
 	}
 	c.JSON(200, v)
+}
+
+func Created(c *gin.Context, v interface{}) {
+	// 将v 转成 *JSONResult 类型
+	if r, ok := v.(*JSONResult); ok {
+		r.Code = globalConstants.HTTPSUCCESS
+		r.Message = globalConstants.HTTPMESSAGESUCCESS
+	}
+	c.JSON(http.StatusCreated, v)
 }
 
 func Error(c *gin.Context, v interface{}) {

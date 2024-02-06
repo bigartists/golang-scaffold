@@ -4,7 +4,6 @@ import (
 	dbs "com.github.goscaffold/internal/dao"
 	middlewares "com.github.goscaffold/pkg/middlewares"
 	"com.github.goscaffold/pkg/validators"
-	"com.github.goscaffold/web/controllers"
 	"com.github.goscaffold/web/routes"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -20,15 +19,10 @@ func Run(port int) error {
 	dbs.InitDB()
 	r := gin.New()
 
-	controllers.SetUpAuthController(r)
-
 	r.Use(middlewares.JwtAuthMiddleware())
 	r.Use(middlewares.ErrorHandler())
 
-	// 登录注册接口 跳过 JwtAuthMiddleware 验证
-
 	// 加载路由
-	//handlers.Build(r)
 	routes.Build(r)
 	// 加载 validator
 	validators.Build()

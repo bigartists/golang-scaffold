@@ -10,7 +10,7 @@ func WithUserId(id int64) UserModelAttrFunc {
 	}
 }
 
-func WithUserName(name string) UserModelAttrFunc {
+func WithUsername(name string) UserModelAttrFunc {
 	return func(u *UserImpl) {
 		u.Username = name
 	}
@@ -19,6 +19,12 @@ func WithUserName(name string) UserModelAttrFunc {
 func WithPassword(pwd string) UserModelAttrFunc {
 	return func(u *UserImpl) {
 		u.Password = pwd
+	}
+}
+
+func WithEmail(email string) UserModelAttrFunc {
+	return func(u *UserImpl) {
+		u.Email = email
 	}
 }
 
