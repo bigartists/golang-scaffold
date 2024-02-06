@@ -1,4 +1,6 @@
 application.yaml
 /resources/pem/
 /docs/
+# IntelliJ IDEA files
 .idea/
+.DS_Store
