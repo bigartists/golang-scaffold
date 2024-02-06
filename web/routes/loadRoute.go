@@ -7,4 +7,5 @@ import (
 
 func Build(r *gin.Engine) {
 	controllers.NewUserHandler().Build(r)
+	controllers.NewAuthController().Build(r)
 }

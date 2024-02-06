@@ -23,9 +23,11 @@ type UserImpl struct {
 	// description
 	Description string `json:"description" gorm:"column:description"`
 	// avatar
-	Avatar   string    `json:"avatar" gorm:"column:avatar"`
-	CreateAt time.Time `json:"create_time" gorm:"column:create_time;type:datetime(0)"`
-	UpdateAt time.Time `json:"update_time" gorm:"column:update_time;type:datetime(0)"`
+	Avatar string `json:"avatar" gorm:"column:avatar"`
+	// 自动维护时间
+
+	CreateAt time.Time `json:"create_time" gorm:"column:create_time;type:datetime(0); autoCreateTime"`
+	UpdateAt time.Time `json:"update_time" gorm:"column:update_time;type:datetime(0); autoUpdateTime"`
 	CreateBy int64     `json:"-" gorm:"column:create_by"`
 	UpdateBy int64     `json:"-" gorm:"column:update_by"`
 }
@@ -54,6 +56,12 @@ func (u *UserImpl) GeneratePassword() error {
 	}
 	u.Password = string(pas)
 	return nil
+}
+
+// 检查密码
+func (u *UserImpl) CheckPassword(password string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(password))
+	return err == nil
 }
 
 //func (u *UserImpl) BeforeSave() error {

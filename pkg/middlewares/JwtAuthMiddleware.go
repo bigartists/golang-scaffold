@@ -15,9 +15,20 @@ import (
 
 func JwtAuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		path := c.Request.URL.Path
+		// 定义不需要JWT验证的路径
+		exceptPaths := map[string]bool{
+			"/login":    true,
+			"/register": true,
+		}
+		// 如果请求路径在白名单中，则不进行JWT验证，直接继续处理请求
+		if _, ok := exceptPaths[path]; ok {
+			c.Next()
+			return
+		}
 		tokenString := c.GetHeader("Authorization")
 		if tokenString == "" || !strings.HasPrefix(tokenString, "Bearer ") {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "token未获取"})
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "jwt未获取"})
 			c.Abort()
 			return
 		}
