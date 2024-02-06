@@ -62,10 +62,8 @@ func OK(c *gin.Context, v interface{}) {
 	if r, ok := v.(*JSONResult); ok {
 		r.Code = globalConstants.HTTPSUCCESS
 		r.Message = globalConstants.HTTPMESSAGESUCCESS
-
 	}
 	c.JSON(200, v)
-
 }
 
 func Error(c *gin.Context, v interface{}) {
